@@ -16,7 +16,9 @@ def frame_diff(f0, f1, f2):
     
     ret, result = cv2.threshold(result, threshold, 255,cv2.THRESH_BINARY);
     return result
-    
+
+## write_video changes the camera's resolution to 1280x720 for recording purposes,
+## records for 30 seconds, then switches back to a lower resolution to check for motion again
 def write_video(camera):
     camera.resolution = (1280, 720)
     camera.ISO = 500
@@ -33,16 +35,15 @@ def write_video(camera):
 print 'INITIALIZING MOTION DETECTION CAMERA'
 
 camera = picamera.PiCamera()
-camera.resolution = (320,240)
+camera.resolution = (320,240) # low resolution for frame comparison helps compensate for the RPi's CPU
 camera.LED = False
 
-stream = io.BytesIO()
+stream = io.BytesIO() 
 
-threshold = 35
-min_pixel_change = 1000
-min_pixel_change_rec = 500
-    
-    
+threshold = 35 # Minimum pixel value change
+min_pixel_change = 1000 # Minimum number of pixels changed
+
+# initialize the first 3 frames before executing the loop
 stream.seek(0)
 camera.capture(stream, 'jpeg', True)
 prev_frame = cv2.cvtColor((cv2.imdecode((np.fromstring(stream.getvalue(), dtype=np.uint8)), 1)), cv2.COLOR_BGR2GRAY)
@@ -59,10 +60,10 @@ print 'MOTION DETECTION ACTIVATED'
 
 while True:
     movement = frame_diff(prev_frame, current_frame, next_frame)   
-    nonZero = cv2.countNonZero(movement)
+    nonZero = cv2.countNonZero(movement)  # counts the number of nonZero pixels - white pixels
    
     
-    if nonZero > min_pixel_change:
+    if nonZero > min_pixel_change: # compares the number of changed pixels (white) to the threshold for minimum pixels changed
         print 'motion detected<<>>start recording'
 
         write_video(camera)
@@ -73,7 +74,8 @@ while True:
         stream.seek(0)
         camera.capture(stream, 'jpeg', True)
         next_frame = cv2.cvtColor((cv2.imdecode((np.fromstring(stream.getvalue(), dtype=np.uint8)), 1)), cv2.COLOR_BGR2GRAY)
-        
+    
+    # move frames forward    
     prev_frame = current_frame
     current_frame = next_frame
     stream.seek(0)
