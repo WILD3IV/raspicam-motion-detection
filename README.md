@@ -4,8 +4,9 @@ This project uses the official Raspberry Pi Camera module along with the latest 
 http://downloads.raspberrypi.org/raspbian_latest
 
 Dont forget to activate the camera using:
+========================
 sudo raspi-config
-
+========================
 Make sure your RPi is up to date:
 sudo apt-get update
 sudo apt-get upgrade
