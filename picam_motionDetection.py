@@ -6,6 +6,10 @@ import datetime
 import time
 import io
 import picamera
+import sys
+import os
+import subprocess
+
 
 ## frame_diff finds two absolute differences between image matrices;
 ## 3 images are used to create a moving average of frames
@@ -22,13 +26,17 @@ def frame_diff(f0, f1, f2):
 def write_video(camera):
     camera.resolution = (1280, 720)
     camera.ISO = 500
+    
     folder = datetime.datetime.now().strftime("%Y-%m-%d")
     timestamp = datetime.datetime.now().strftime("%H%M%S")
     
+    if not os.path.exists('/home/pi/motion_camera/recorded_video/' + folder + '/'):
+        os.makedirs('/home/pi/motion_camera/recorded_video/' + folder + '/')
+        
+    # start recording    
     camera.start_recording('/home/pi/motion_camera/recorded_video/' + folder + '/' + timestamp + '.h264')
     camera.wait_recording(30)    
     camera.stop_recording()
-    print 'recording stopped'
 
     camera.resolution = (320,240)
     
@@ -61,12 +69,13 @@ print 'MOTION DETECTION ACTIVATED'
 while True:
     movement = frame_diff(prev_frame, current_frame, next_frame)   
     nonZero = cv2.countNonZero(movement)  # counts the number of nonZero pixels - white pixels
-   
     
     if nonZero > min_pixel_change: # compares the number of changed pixels (white) to the threshold for minimum pixels changed
-        print 'motion detected<<>>start recording'
-
+       
         write_video(camera)
+        
+        #subprocess will check disk space and delete old footage if necessary
+        subprocess.Popen([sys.executable, '/home/pi/motion_camera/disk_check.py'])
         
         stream.seek(0)
         camera.capture(stream, 'jpeg', True)
