@@ -11,9 +11,11 @@ disk = os.statvfs("/home/pi/motion_camera/recorded_video/")
 totalBytes = float(disk.f_bsize*disk.f_blocks)
 bytesUsed = float(disk.f_bsize*(disk.f_blocks-disk.f_bfree))
 
+# os.system(rsync command)
+
+
 ## if the percentage of bytes used is greater than 90% of the total
 ## space, remove all directories older than one week
-
 if (bytesUsed / totalBytes > .9):
   dir_to_search = "/home/pi/motion_camera/recorded_video/"
   for root, dirnames, filenames in os.walk(dir_to_search):
