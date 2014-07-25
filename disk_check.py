@@ -11,7 +11,7 @@ disk = os.statvfs("/home/pi/motion_camera/recorded_video/")
 totalBytes = float(disk.f_bsize*disk.f_blocks)
 bytesUsed = float(disk.f_bsize*(disk.f_blocks-disk.f_bfree))
 
-# os.system(rsync command)
+# os.system(rsync avr -e ssh /home/pi/motion_camera/recorded_video/ pi@192.168.xxx.xxx):/destination/path
 
 
 ## if the percentage of bytes used is greater than 90% of the total
