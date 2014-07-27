@@ -1,0 +1,23 @@
+  #!/bin/bash
+  
+  
+  if [ -d "/tmp/raspicam-motion-detection-master" ]; then
+  
+    chmod 755 "/tmp/raspicam-motion-detection-master/raspicam-motion.py"
+    chmod 755 "/tmp/raspicam-motion-detection-master/disk-check.py"
+    chmod 755 "/tmp/raspicam-motion-detection-master/raspicam-motion-daemon.sh"
+    
+    mv "/tmp/raspicam-motion-detection-master/raspicam-motion.py" "/usr/local/bin"
+    mv "/tmp/raspicam-motion-detection-master/disk-check.py" "/usr/local/bin"
+    mv "/tmp/raspicam-motion-detection-master/raspicam-motion-daemon.sh" "/etc/init.d"
+    
+    cd "/etc/init.d"
+    update-rc.d raspicam-motion-daemon.sh defaults
+    
+    mkdir "/home/pi/motion_camera"
+    mkdir "/home/pi/motion_camera/recorded_video"
+    chmod 777 "/home/pi/motion_camera"
+    chmod 777 "/home/pi/motion_camera/recorded_video"
+    
+  fi
+  
