@@ -11,6 +11,10 @@
     chmod 755 "/etc/init.d/raspicam-motion-daemon.sh"
     cd "/etc/init.d"
     update-rc.d raspicam-motion-daemon.sh defaults
+    
+    echo "Raspicam Motion Detection Installed"
+    echo "System will now restart"
+    reboot
 
   fi
   
